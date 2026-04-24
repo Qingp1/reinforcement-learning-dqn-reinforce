@@ -27,7 +27,6 @@ class Visual:
         """
         avg_reward = np.mean(self.rewards[-50:]) if len(self.rewards) >= 50 else np.mean(self.rewards)
         
-        # NOTE: We implement a custom progress bar here, but you should use tqdm on your final projects for better visuals
         progress = (episode + 1) / self.total_episodes
         bar_length = 20
         block = int(round(bar_length * progress))
@@ -69,7 +68,7 @@ class Visual:
         """
         Plots the rewards and losses over episodes.
         
-        :param save_for_submission: If True, saves the plot to submission folder
+        :param save_for_submission: If True, saves the plot to a local output folder
         :param model_name: Name of the model (used for filename)
         """
         print("\nPlotting results...")
@@ -79,7 +78,6 @@ class Visual:
         ax1.plot(self.episodes, self.rewards, label='Reward', color='blue', alpha=0.6)
         window_size = 50
         if len(self.rewards) >= window_size:
-            # NOTE: We use a 1-D convolution here to compute the moving average (a use case from assignment 3)
             moving_avg = np.convolve(self.rewards, np.ones(window_size)/window_size, mode='valid')
             ax1.plot(self.episodes[window_size-1:], moving_avg, label=f'Avg Reward (ws:{window_size})', color='red', linewidth=2)
         

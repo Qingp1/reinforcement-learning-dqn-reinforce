@@ -6,10 +6,6 @@ from typing import List
 # Killing optional CPU driver warnings
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
-# DO NOT ALTER MODEL CLASS OUTSIDE OF TODOs. OTHERWISE, YOU RISK INCOMPATIBILITY
-# WITH THE AUTOGRADER AND RECEIVING A LOWER GRADE.
-
-
 class Reinforce(tf.keras.Model):
     def __init__(self, state_size: int, num_actions: int, lr: float = 0.001) -> None:
         """
@@ -25,7 +21,6 @@ class Reinforce(tf.keras.Model):
         self.num_actions = num_actions
         self.state_size = state_size
         self.optimizer = tf.keras.optimizers.legacy.Adam(learning_rate=lr)
-        # TODO: Define network parameters and optimizer
         self.model = tf.keras.Sequential([
             tf.keras.layers.Input(shape=(state_size,)),
             tf.keras.layers.Dense(64, activation="relu"),
@@ -45,20 +40,17 @@ class Reinforce(tf.keras.Model):
         :return: A [episode_length,num_actions] matrix representing the probability distribution over actions
         for each state in the episode
         """
-        # TODO: implement this ~
         return self.model(states)
 
     def loss_func(self, states: tf.Tensor, actions: List[int], discounted_rewards: List[float]) -> tf.Tensor:
         """
-        Computes the loss for the agent. Make sure to understand the handout clearly when implementing this.
+        Computes the REINFORCE policy gradient loss.
 
         :param states: A batch of states of shape [episode_length, state_size]
         :param actions: History of actions taken at each timestep of the episode (represented as an [episode_length] array)
         :param discounted_rewards: Discounted rewards throughout a complete episode (represented as an [episode_length] array)
         :return: loss, a Tensorflow scalar
         """
-        # TODO: implement this
-        # Hint: Use gather_nd to get the probability of each action that was actually taken in the episode
         states = tf.convert_to_tensor(states, dtype=tf.float32)
         actions = tf.convert_to_tensor(actions, dtype=tf.int32)
         discounted_rewards = tf.convert_to_tensor(discounted_rewards, dtype=tf.float32)

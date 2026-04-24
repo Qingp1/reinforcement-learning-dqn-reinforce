@@ -16,19 +16,17 @@ def discount(rewards: List[float], discount_factor: float = .99) -> List[float]:
     returns a list of the discounted rewards for each timestep, which
     are calculated by summing the rewards for each future timestep, discounted
     by how far in the future it is.
-    For example, in the simple case where the episode rewards are [1, 3, 5] 
+    For example, in the simple case where the episode rewards are [1, 3, 5]
     and discount_factor = .99 we would calculate:
     dr_1 = 1 + 0.99 * 3 + 0.99^2 * 5 = 8.8705
     dr_2 = 3 + 0.99 * 5 = 7.95
     dr_3 = 5
     and thus return [8.8705, 7.95 , 5].
-    Refer to the slides for more details about how/why this is done.
 
     :param rewards: List of rewards from an episode [r_{t1},r_{t2},...]
     :param discount_factor: Gamma discounting factor to use, defaults to .99
     :returns: discounted_rewards: list containing the discounted rewards for each timestep in the original rewards list
     """
-    # TODO: Compute discounted rewards
     discounted = []
     running = 0.0
     for r in reversed(rewards):
@@ -52,9 +50,6 @@ def generate_trajectory(env: gym.Env, model: tf.keras.Model) -> Tuple[List[np.nd
     done = False
 
     while not done:
-        # TODO:
-        # 1) use model to generate probability distribution over next actions
-        # 2) sample from this distribution to pick the next action
         states.append(state)
 
         state_tensor = tf.convert_to_tensor(state[None, :], dtype=tf.float32)
@@ -89,10 +84,6 @@ def train_reinforce_episode(env: gym.Env, model: tf.keras.Model) -> Tuple[float,
     :returns: The total reward for the episode, and the loss
     """
 
-    # TODO:
-    # 1) Use generate trajectory to run an episode and get states, actions, and rewards.
-    # 2) Compute discounted rewards.
-    # 3) Compute the loss from the model and run backpropagation on the model.
     states, actions, rewards = generate_trajectory(env, model)
     total_reward = float(sum(rewards))
 
@@ -121,8 +112,6 @@ def train_deep_q_episode(env: gym.Env, model: tf.keras.Model, batch_size: int, m
     :param memory: The memory to sample from (you will mutate this in place)
     :param epsilon: The epsilon value for epsilon-greedy
     :returns: The total reward for the episode, memory, and the loss
-
-    NOTE: Make sure you convert the batch elements to the correct types (np.ndarray, tf.Tensor, etc.)
     """
     state = env.reset()[0]
     done = False
@@ -181,10 +170,7 @@ def train_deep_q_episode(env: gym.Env, model: tf.keras.Model, batch_size: int, m
 
 def train(env: gym.Env, model: tf.keras.Model, memory: Optional[List] = None, epsilon: float = .1) -> Union[Tuple[float, tf.Tensor], Tuple[float, List, tf.Tensor]]: 
     """
-    This function is now responsible for directing the training process.
-    Depending on the type of model, it should call the appropriate training function.
-    Think about what needs to happen if the model is a DeepQModel, and what needs to 
-    happen if it is a Reinforce model.     
+    Dispatches to the appropriate training function based on the model type.
 
     :param env: The openai gym environment
     :param model: The model

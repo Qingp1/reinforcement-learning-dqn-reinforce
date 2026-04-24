@@ -14,21 +14,12 @@ class DeepQModel(tf.keras.Model):
         self.state_size = state_size
         self.optimizer = tf.keras.optimizers.legacy.Adam(learning_rate=lr)
 
-        # TODO: Define network parameters and optimizer
-        # We require that you use tf.keras.Sequential to define the model and call it self.model
-        #   (This is for auto-grading purposes)
         self.model = tf.keras.Sequential([
             tf.keras.layers.Input(shape=(state_size,)),
             tf.keras.layers.Dense(64, activation="relu"),
             tf.keras.layers.Dense(64, activation="relu"),
             tf.keras.layers.Dense(num_actions)
         ])
-        
-        # We require that you call your target model self.target_model
-        #    (This is for auto-grading purposes)
-        #    Hints: You can clone the model using tf.keras.models.clone_model
-        #           You can get the weights of model using get_weights
-        #           You can set the weights of target_model using set_weights
 
         self.model.build(input_shape=(None, state_size))
 

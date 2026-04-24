@@ -20,14 +20,8 @@ except:
 
 def parse_arguments() -> argparse.Namespace:
     """
-    HELPER - do not edit.
-    
-    This allows you to run your models easily and quickly adjust the number of parameters to you are using to
-    train your models. For more information on how to use them, refer to the handout.
-
-    NOTE: If you are ever confused on how to use the arguments, you can run
-    python assignment.py --help
-    to see a list of all the arguments and their descriptions.
+    Parses command-line arguments for model type, environment, and training hyperparameters.
+    Run with --help to see all available options.
     """
     parser = argparse.ArgumentParser(description='Reinforcement Learning')
     parser.add_argument('--model', type=str, choices=['REINFORCE', 'REINFORCE_BASELINE', 'DEEP_Q'], required=True, help='Model type to use')
@@ -37,7 +31,7 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument('--save-path', type=str, help='Path to save model weights to')
     parser.add_argument('--lr', type=float, default=0.001, help='Learning rate')
     parser.add_argument('--num-episodes', type=int, default=650, help='Number of training episodes')
-    parser.add_argument('--submit', action='store_true', help='Save training plots to submission folder')
+    parser.add_argument('--submit', action='store_true', help='Save training plots to an output folder')
     return parser.parse_args()
 
 def get_env(env_name: str, render_mode: Optional[str] = None):
@@ -50,12 +44,9 @@ def get_env(env_name: str, render_mode: Optional[str] = None):
 
 def visualize_episode(model: tf.keras.Model, env_name: str) -> None:
     """
-    HELPER - do not edit.
-    Takes in an enviornment and a model and visualizes the model's actions for one episode.
-    We recomend calling this function every 20 training episodes. Please remove all calls of 
-    this function before handing in.
+    Renders one episode in the given environment using the model to select actions.
 
-    :param env: The cart pole enviornment object
+    :param env_name: The environment name to render
     :param model: The model that will decide the actions to take
     """
 
@@ -78,8 +69,7 @@ def visualize_episode(model: tf.keras.Model, env_name: str) -> None:
 
 def visualize_data(total_rewards: List[float]) -> None:
     """
-    HELPER - do not edit.
-    Takes in array of rewards from each episode, visualizes reward over episodes
+    Plots cumulative reward per episode over training.
 
     :param total_rewards: List of rewards from all episodes
     """
@@ -95,9 +85,8 @@ def visualize_data(total_rewards: List[float]) -> None:
 
 def select_environment() -> str:
     """
-    HELPER - do not edit.
-    If you do not specify an environment, this helper will prompt you with options
-    
+    Interactively prompts the user to select a Gymnasium environment.
+
     :returns: The selected environment name
     """
     environments = [
@@ -130,12 +119,11 @@ def select_environment() -> str:
 
 def get_weights_path(model_name: str, env_name: str) -> str:
     """
-    HELPER - do not edit.
     Returns the standardized path for saving/loading model weights.
-    
+
     :param model_name: Name of the model: 'REINFORCE', 'DEEP_Q', etc.
     :param env_name: Name of the environment: 'CartPole-v1', 'LunarLander-v2', etc.
-    :returns: Path to the weights directory
+    :returns: Path to the weights file
     """
     weights_dir = "weights"
     os.makedirs(weights_dir, exist_ok=True)
@@ -143,9 +131,7 @@ def get_weights_path(model_name: str, env_name: str) -> str:
 
 def main() -> None:
     """
-    HELPER - do not edit.
-    The main function for running the assignment. The functionality includes
-    training the model, testing the model, and visualizing the model.
+    Entry point: parses arguments, initializes the model and environment, and runs training or watch mode.
     """
 
     args = parse_arguments()
@@ -199,12 +185,9 @@ def main() -> None:
         visualize_episode(model, env_name)
         return
 
-    # NOTE: This is the main training loop! You might want to look at this if you are interested in how the training loop works.
     totalReward = []
     num_episodes = args.num_episodes
 
-    # NOTE: This visualizer is special to this assignment to help you see your agent in progress. This is very helpful in RL settings
-    # where model training is easier to visualize than in other settings.
     visual = Visual(num_episodes)
     viz_every = 50
     memory = None
@@ -221,9 +204,7 @@ def main() -> None:
         
         visual.update(episode, loss, reward)
         
-        # NOTE: This is checkpointing for those of you interested. Here, we are using the average reward as our metric and whenever 
-        # we find a new model instance with the best performance, we save it. This is very helpful in setting where agents may end
-        # setting on sub-optimal training strategies as training progresses. 
+        # Save weights whenever a new best average reward is found
         current_best = visual.get_best_avg_reward()
         if current_best > best_avg_reward + 5.0:
             best_avg_reward = current_best
